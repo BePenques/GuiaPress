@@ -1,0 +1,49 @@
+<%- include('../../partials/header.ejs'); %>
+<%- include('../../partials/navbar.ejs'); %>
+<body>
+    <div class="container">
+        <hr>
+        <div class="card">
+            <div class="card-header">
+                <% if(article != null) {%>
+                    <h2>Atualizar Artigo</h2>
+                <% }else{ %>
+                    <h2>Novo Artigo</h2>
+                <% }%>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/articles/save">
+                    <input class="form-control" type="text" name="title" id="title" <%  if(article != null){ %> value="<%=article.title %>" <% }else{ %> value="" <% } %>" placeholder="Defina o título do artigo"><br>
+                    <label>Categoria</label>
+                    <select name="category" class="form-control" id="">
+                      <% categories.forEach((category)=>{ %>
+                        <option value="<%= category.id %>"><%= category.title %></option>
+                      <% }) %>  
+                    </select>
+                    <br>
+                    <textarea class="form-control" name="body" id="article" cols="30" rows="10" placeholder="Escreva o artigo aqui"></textarea>
+                    <br>
+                    <% if(article != null) {%>
+                        <input type="hidden" name="id" value="<%= article.id %>">
+                    <% } %>
+                    <% if(article != null) {%>
+                        <button class="btn btn-success">Atualizar</button>
+                    <% }else{ %>
+                        <button class="btn btn-success">Cadastrar</button>
+                    <% }%>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<%- include('../../partials/footer.ejs'); %>
+<script src="/tinymce/tinymce.min.js"></script>
+<script>
+
+    tinymce.init({
+        selector: "#article",
+        plugins: [
+            'advlist autolink link image lists print preview hr searchreplace wordcount fullscreen insertdatetime media save table paste emoticons'
+        ]
+    })
+</script>

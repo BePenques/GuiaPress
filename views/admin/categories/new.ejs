@@ -1,0 +1,30 @@
+<%- include('../../partials/header.ejs'); %>
+<%- include('../../partials/navbar.ejs'); %>
+<body>
+    <div class="container">
+        <hr>
+        <div class="card">
+            <div class="card-header">
+                <% if(category != null) {%>
+                    <h2>Atualizar categoria</h2>
+                <% }else{ %>
+                    <h2>Cadastro de categoria</h2>
+                <% }%>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/categories/save">
+                    <input class="form-control" type="text" name="title" id="title" <%  if(category != null){ %> value="<%=category.title %>" <% }else{ %> value="" <% } %>" placeholder="Defina o título da categoria"><br>
+                    <% if(category != null) {%>
+                        <input type="hidden" name="id" value="<%= category.id %>">
+                    <% } %>
+                    <% if(category != null) {%>
+                        <button class="btn btn-success">Atualizar</button>
+                    <% }else{ %>
+                        <button class="btn btn-success">Cadastrar</button>
+                    <% }%>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<%- include('../../partials/footer.ejs'); %>
