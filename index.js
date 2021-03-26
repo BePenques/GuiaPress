@@ -71,7 +71,7 @@ app.get("/category/:slug", (req,res)=>{
     },
     include: [{model: Article}]//inner join c article
   }).then( category => {
-    if(categoy != undefined){
+    if(category != undefined){
       Category.findAll().then(categories =>{
         res.render("index",{articles: category.articles, categories: categories})
       });

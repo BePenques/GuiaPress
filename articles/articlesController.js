@@ -7,25 +7,28 @@ const slugify = require("slugify");
 router.get("/admin/articles/new/:id?", (req,res)=>{// Rota GET para direcionar tanto pra view de cadastrar quanto para view de atualizar
     var id = req.params.id;
    
-    // if(id){//update
-    //     if(isNaN(id)){
-    //         res.redirect("/admin/articles");
-    //     }
-    //     Category.findByPk(id).then(category=>{
-    //         if(category != undefined){
-    //             res.render("admin/articles/new",{category:category});//Utiliza a mesma view para cadastrar e atualizar
-    //         }else{
-    //             res.redirect("/admin/articles");
-    //         }
-    //     }).catch(erro =>{
-    //          res.redirect("/admin/articles");
-    //     });
-    // }else{//create
+    if(id){//update
+        if(isNaN(id)){
+            res.redirect("/admin/articles");
+        }
+        Article.findByPk(id).then(article=>{
+            if(article != undefined){
+                Category.findAll().then(categories =>{
+                res.render("admin/articles/new",{article: article, categories: categories});//Utiliza a mesma view para cadastrar e atualizar
+            })
+            }else{
+                res.redirect("/admin/articles");
+            }
+        }).catch(erro =>{
+             res.redirect("/admin/articles");
+        });
+
+    }else{//create
         var article = null;
         Category.findAll().then(categories =>{
             res.render("admin/articles/new",{article:article, categories: categories});
         })
-    // }
+    }
 });
 
 router.post("/articles/save",(req,res)=>{//rota POST tanto para gravar no banco quando para atualizar
@@ -33,19 +36,21 @@ router.post("/articles/save",(req,res)=>{//rota POST tanto para gravar no banco 
     var body = req.body.body;
     var category = req.body.category;
     var id = req.body.id;
-    // if(id){//se existir id atualiza o registro
-    //     if(title != undefined){
-    //         Category.update({title: title, slug: slugify(title)},{
-    //             where: {
-    //                 id: id
-    //             }
-    //         }).then(()=>{
-    //             res.redirect("/admin/categories"); 
-    //         })
-    //     }else{
-    //         res.redirect("/admin/categories/new/"+id);
-    //     }
-    // }else{//se não existir id, grava um novo registro
+    if(id){//se existir id atualiza o registro
+        if(title != undefined){
+            Article.update({title: title, slug:slugify(title), body: body, categoryId: category},{
+                where: {
+                    id: id
+                }
+            }).then(()=>{
+                res.redirect("/admin/articles"); 
+            }).catch(err=>{
+                res.redirect("/");
+            });
+        }else{
+            res.redirect("/admin/articles/new/"+id);
+        }
+    }else{//se não existir id, grava um novo registro
         if(title != undefined && body != undefined){
             Article.create({
                 title: title,
@@ -58,7 +63,7 @@ router.post("/articles/save",(req,res)=>{//rota POST tanto para gravar no banco 
         }else{
             res.redirect("/admin/articles/new");
         }
-    // }
+     }
    
 });
 
@@ -92,6 +97,39 @@ router.post("/articles/delete", (req,res)=>{
     }
 });
 
+router.get("/articles/page/:num", (req,res)=>{
+    var page = req.params.num;
+     var offset = 0;
 
+    if(isNaN(page) || page == 1){
+        offset = 0;
+    }else{
+        offset = parseInt(page) * 4;
+    }
+    //retorna a qtdade de artigos
+    Article.findAndCountAll({
+        limit: 4,
+        offset: offset //retorna dados a partir de um valor 
+    }).then(articles=>{
+
+        var next;
+        //verifica se tem outra pag p ser exibida
+        if(offset + 4 >= articles.count){
+            next = false;
+        }else{
+            next = true;
+        }
+
+        var result = {
+            next: next,
+            articles : articles,
+
+        }
+
+        Category.findAll().then(categories =>{
+            res.render("index",{articles: articles, categories: categories})
+        });    
+    })
+})
 
 module.exports = router;

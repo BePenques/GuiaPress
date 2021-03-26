@@ -1,6 +1,5 @@
 <%- include('../../partials/header.ejs'); %>
 <%- include('../../partials/navbar.ejs'); %>
-<body>
     <div class="container">
         <hr>
         <div class="card">
@@ -17,11 +16,19 @@
                     <label>Categoria</label>
                     <select name="category" class="form-control" id="">
                       <% categories.forEach((category)=>{ %>
-                        <option value="<%= category.id %>"><%= category.title %></option>
+                        <% if(article != null) { %>
+                            <% if( category.id == article.categoryId) { %>
+                            <option value="<%= category.id %>"  selected > <%= category.title %></option>
+                            <% }else { %>
+                                <option value="<%= category.id %>" > <%= category.title %></option>
+                            <% } %>
+                        <% }else{ %>
+                            <option value="<%= category.id %>" > <%= category.title %></option>
+                        <% } %>
                       <% }) %>  
                     </select>
                     <br>
-                    <textarea class="form-control" name="body" id="article" cols="30" rows="10" placeholder="Escreva o artigo aqui"></textarea>
+                    <textarea class="form-control" name="body" id="article" cols="30" rows="10" placeholder="Escreva o artigo aqui"><% if(article != null){ %> <%- article.body %> <% } %></textarea>
                     <br>
                     <% if(article != null) {%>
                         <input type="hidden" name="id" value="<%= article.id %>">
@@ -35,13 +42,14 @@
             </div>
         </div>
     </div>
-</body>
+
 <%- include('../../partials/footer.ejs'); %>
 <script src="/tinymce/tinymce.min.js"></script>
 <script>
 
     tinymce.init({
         selector: "#article",
+        activeEditor: true,
         plugins: [
             'advlist autolink link image lists print preview hr searchreplace wordcount fullscreen insertdatetime media save table paste emoticons'
         ]
