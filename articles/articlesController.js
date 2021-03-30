@@ -98,14 +98,16 @@ router.post("/articles/delete", (req,res)=>{
 });
 
 router.get("/articles/page/:num", (req,res)=>{
+    // var page = req.params.num;
     var page = req.params.num;
      var offset = 0;
 
-    if(isNaN(page) || page == 1){
+    if(isNaN(page)){
         offset = 0;
     }else{
         offset = parseInt(page) * 4;
     }
+   
     //retorna a qtdade de artigos
     Article.findAndCountAll({
         limit: 4,
@@ -125,11 +127,11 @@ router.get("/articles/page/:num", (req,res)=>{
             articles : articles,
 
         }
-
+       
         Category.findAll().then(categories =>{
-            res.render("index",{articles: articles, categories: categories})
+            res.render("admin/articles/page",{result: result, categories: categories})
         });    
     })
-})
+});
 
 module.exports = router;

@@ -39,7 +39,8 @@ app.get("/", (req,res) =>{
     ]
   }).then(articles => {
     Category.findAll().then(categories =>{
-      res.render("index",{articles: articles, categories: categories})
+      var result = null;
+      res.render("index",{result: result,articles: articles, categories: categories})
     });
   });
 })
