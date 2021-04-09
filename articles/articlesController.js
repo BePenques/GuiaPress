@@ -111,7 +111,10 @@ router.get("/articles/page/:num", (req,res)=>{
     //retorna a qtdade de artigos
     Article.findAndCountAll({
         limit: 4,
-        offset: offset //retorna dados a partir de um valor 
+        offset: offset, //retorna dados a partir de um valor 
+        order:[
+            ['id','DESC']
+        ]
     }).then(articles=>{
 
         var next;
