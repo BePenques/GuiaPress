@@ -5,7 +5,7 @@
         <hr>
         <div class="jumbotron">
             <h1 class="display-4">Bem vindo!</h1>
-            <p class="lead">Este é um blog simples</p>
+            <h5 class="lead">Este é um blog simples</h5>
             <hr class="my-4">
             <!-- <p>ele usa classes utilitarias</p> -->
             <a class ="btn btn-primary btn-lg" href="#" role="button">Leia mais...</a>
@@ -17,6 +17,7 @@
                     <h2><%= article.title %></h2>
                 </div>
                 <div class="card-body">
+                    <p id="previa"><%- article.body %> </p>
                     <a class="btn btn-success" href="/<%= article.slug %>">Ler artigo</a>
                 </div>
             </div>
@@ -31,3 +32,11 @@
     </div>
 </body>
 <%- include('partials/footer.ejs'); %>
+<style>
+p {
+  max-width: 25ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

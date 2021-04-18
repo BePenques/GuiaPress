@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const session = require("express-session");
 const connection = require("./database/database");
+
 const categoriesController = require("./categories/categoriesController");
 const articlesController = require("./articles/articlesController");
 const userController = require("./user/userController");
@@ -10,6 +12,18 @@ const userController = require("./user/userController");
 const Article = require("./articles/Article");
 const Category = require("./categories/Category");
 const User = require("./user/User");
+
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+            // biblioteca de operadores
+
+
+
+//Sessions
+app.use(session({//cookie é uma referencia p/ a sessão no servidor
+  secret: "hasuhshsgdgdfdfdfsgdfdfddsfd", cookie: { }
+}))
+
 //view engine
 app.set('view engine', 'ejs');
 
@@ -48,6 +62,48 @@ app.get("/", (req,res) =>{
     });
   });
 })
+
+/* sessoes */
+app.get("/session", (req, res)=>{//escrever sessão
+     req.session.treinamento = "Formação node js";
+     req.session.ano = 2021;
+});
+
+app.post("/search", (req, res)=>{ //paginação
+ 
+  const search = `%${req.body.search}`; // string de consulta
+ 
+
+  Article.findAll({ where: { title: { [Op.like]: search } } })
+  .then(articles => {
+      if(articles == undefined){
+        Article.findAll({ where: { body: { [Op.like]: search } } })
+          .then(articles => {
+              if(articles != undefined){
+                Category.findAll().then(categories =>{
+                  var result = null;
+                  res.render("index",{result: result,articles: articles, categories: categories})
+                });
+              }else{
+                console.log("aff");
+                res.redirect("/");
+              }
+          });
+      }else{
+        Category.findAll().then(categories =>{
+          var result = null;
+          res.render("index",{result: result,articles: articles, categories: categories})
+        });
+      }
+
+      
+  });
+  
+});
+
+// app.get("/read", (req, res) =>{//ler sessão
+
+// });
 
 app.get("/:slug", (req,res)=>{
   var slug = req.params.slug;

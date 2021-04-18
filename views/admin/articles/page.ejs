@@ -17,6 +17,7 @@
                     <h2><%= article.title %></h2>
                 </div>
                 <div class="card-body">
+                    <p id="previa"><%- article.body %> </p>
                     <a class="btn btn-success" href="/<%= article.slug %>">Ler artigo</a>
                 </div>
             </div>
@@ -46,3 +47,11 @@
     </div>
 </body>
 <%- include('../../partials/footer.ejs'); %>
+<style>
+    p {
+      max-width: 25ch;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+</style>

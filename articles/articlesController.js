@@ -3,8 +3,9 @@ const router = express.Router();
 const Category = require("../categories/Category");
 const Article = require("./Article");
 const slugify = require("slugify");
+const adminAuth = require("../middlewares/adminAuth");
 
-router.get("/admin/articles/new/:id?", (req,res)=>{// Rota GET para direcionar tanto pra view de cadastrar quanto para view de atualizar
+router.get("/admin/articles/new/:id?", adminAuth , (req,res)=>{// Rota GET para direcionar tanto pra view de cadastrar quanto para view de atualizar
     var id = req.params.id;
    
     if(id){//update
@@ -31,7 +32,7 @@ router.get("/admin/articles/new/:id?", (req,res)=>{// Rota GET para direcionar t
     }
 });
 
-router.post("/articles/save",(req,res)=>{//rota POST tanto para gravar no banco quando para atualizar
+router.post("/articles/save",adminAuth,(req,res)=>{//rota POST tanto para gravar no banco quando para atualizar
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
@@ -67,7 +68,7 @@ router.post("/articles/save",(req,res)=>{//rota POST tanto para gravar no banco 
    
 });
 
-router.get("/admin/articles",(req,res)=>{
+router.get("/admin/articles", adminAuth ,(req,res)=>{
     Article.findAll({
         include: [{model: Category}]//join c/ category
     }).then(articles =>{
@@ -76,7 +77,7 @@ router.get("/admin/articles",(req,res)=>{
    
 });
 
-router.post("/articles/delete", (req,res)=>{
+router.post("/articles/delete", adminAuth,(req,res)=>{
     var id = req.body.id;
     if(id != undefined){
         if(!isNaN(id)){
